@@ -14,6 +14,11 @@ required_files=(
   "assets/videos/i2v/wave/trajcfg.mp4"
   "assets/videos/t2av/controller/trajcfg.mp4"
   "assets/media/i2-3d/trajcfg.gif"
+  "assets/gallery/t2v/vbench_wan22_14b/trajcfg.mp4"
+  "assets/gallery/i2v/pai_g_cosmos/trajcfg.mp4"
+  "assets/gallery/t2av/vabench_ltx23/trajcfg.mp4"
+  "assets/gallery/t2i/qwen-image/comparison.png"
+  "assets/gallery/i2-3d/386_trajcfg.gif"
 )
 
 for path in "${required_files[@]}"; do
@@ -26,7 +31,11 @@ grep -q 'id="results"' index.html
 grep -q 'id="gallery"' index.html
 grep -q 'id="citation"' index.html
 grep -q 'prefers-reduced-motion' styles.css
-grep -q 'aria-selected="true"' index.html
+grep -q 'data-gallery-root' index.html
+grep -q 'const galleryData' script.js
+grep -q 'Wan2.2-14B' script.js
+grep -q 'Qwen-Image' script.js
+grep -q 'Hunyuan3D 2.0' script.js
 grep -q 'Coming soon' index.html
 
 if grep -Eq '(src|href)=""' index.html script.js; then
@@ -35,4 +44,3 @@ if grep -Eq '(src|href)=""' index.html script.js; then
 fi
 
 echo "TrajCFG static smoke checks passed."
-

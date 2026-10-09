@@ -38,7 +38,6 @@ Also update the BibTeX entry with the final arXiv identifier.
 - `styles.css` — responsive design and motion
 - `script.js` — gallery, navigation, synchronized playback, and copy interaction
 - `assets/images/` — paper figures rendered for the web
-- `assets/videos/` — selected qualitative comparisons
-- `assets/media/` — image-to-3D comparison media
+- `assets/gallery/` — complete appendix gallery across five modalities and all backbones
+- `assets/videos/` and `assets/media/` — original landing-page selections retained for compatibility
 - `tests/browser/` — lightweight smoke-check documentation and script
-

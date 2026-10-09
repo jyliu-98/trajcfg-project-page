@@ -185,38 +185,11 @@
         <div class="gallery-heading">
           <div class="section-heading reveal">
             <p class="kicker">Across modalities</p>
-            <h2 id="gallery-title">See guidance change the motion, detail, and alignment.</h2>
+            <h2 id="gallery-title">Five modalities. Every backbone. All qualitative results.</h2>
           </div>
-          <p class="gallery-note reveal" data-delay="1">Choose a generation task, then move between examples. Videos are synchronized automatically for a fair side-by-side comparison.</p>
+          <p class="gallery-note reveal" data-delay="1">Each modality is listed below. Switch between backbones—ordered strongest first—then move through every appendix example. Videos stay synchronized for fair comparison.</p>
         </div>
-
-        <div class="task-tabs reveal" role="tablist" aria-label="Generation tasks" data-task-tabs>
-          <button role="tab" type="button" aria-selected="true" aria-controls="gallery-panel" id="tab-t2v" data-task="t2v">Text to Video <span>T2V</span></button>
-          <button role="tab" type="button" aria-selected="false" aria-controls="gallery-panel" id="tab-i2v" data-task="i2v" tabindex="-1">Image to Video <span>I2V</span></button>
-          <button role="tab" type="button" aria-selected="false" aria-controls="gallery-panel" id="tab-t2av" data-task="t2av" tabindex="-1">Text to A/V <span>T2AV</span></button>
-          <button role="tab" type="button" aria-selected="false" aria-controls="gallery-panel" id="tab-t2i" data-task="t2i" tabindex="-1">Text to Image <span>T2I</span></button>
-          <button role="tab" type="button" aria-selected="false" aria-controls="gallery-panel" id="tab-i23d" data-task="i23d" tabindex="-1">Image to 3D <span>I2-3D</span></button>
-        </div>
-
-        <div class="gallery-frame reveal" id="gallery-panel" role="tabpanel" aria-labelledby="tab-t2v" tabindex="0" data-gallery-panel>
-          <div class="gallery-meta">
-            <div>
-              <span class="gallery-benchmark" data-gallery-benchmark>DynamicBench · Wan2.2-14B</span>
-              <p class="gallery-prompt" data-gallery-prompt></p>
-              <p class="gallery-hint" data-gallery-hint></p>
-            </div>
-            <div class="case-controls" aria-label="Gallery case navigation">
-              <button type="button" data-prev-case aria-label="Previous example">
-                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m15 5-7 7 7 7"/></svg>
-              </button>
-              <span data-case-count aria-live="polite">01 / 02</span>
-              <button type="button" data-next-case aria-label="Next example">
-                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></svg>
-              </button>
-            </div>
-          </div>
-          <div class="media-comparison" data-media-comparison></div>
-        </div>
+        <div class="modality-stack" data-gallery-root></div>
       </div>
     </section>
 
