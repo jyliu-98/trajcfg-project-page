@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="TrajCFG adapts classifier-free guidance token by token using denoising trajectory feedback, with no training or extra model evaluations.">
+  <meta name="theme-color" content="#9bcfbd">
+  <title>TrajCFG — Token-Wise Classifier-Free Guidance</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%239bcfbd'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='serif' font-size='44' font-style='italic' fill='%23202523'%3ET%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header" data-header>
+    <nav class="nav shell" aria-label="Primary navigation">
+      <a class="wordmark" href="#top" aria-label="TrajCFG home">
+        <span class="wordmark-mark" aria-hidden="true">T</span>
+        <span>TrajCFG</span>
+      </a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" data-nav-toggle>
+        <span class="sr-only">Toggle navigation</span>
+        <span></span><span></span>
+      </button>
+      <div class="nav-links" id="nav-links" data-nav-links>
+        <a href="#overview">Overview</a>
+        <a href="#method">Method</a>
+        <a href="#results">Results</a>
+        <a href="#gallery">Gallery</a>
+        <a href="#citation">Citation</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero shell" id="top" aria-labelledby="hero-title">
+      <div class="hero-copy reveal">
+        <div class="eyebrow-row">
+          <span class="eyebrow">Preprint · 2026</span>
+          <span class="eyebrow-dot" aria-hidden="true"></span>
+          <span class="eyebrow muted">Training-free guidance</span>
+        </div>
+        <h1 id="hero-title"><span>TrajCFG:</span> Token-Wise Classifier-Free Guidance <em>via Denoising Trajectory Feedback</em></h1>
+        <p class="hero-dek">Let every token follow the guidance it needs—using signals already present in its denoising history.</p>
+
+        <div class="authors" aria-label="Authors and affiliations">
+          <p class="author-list">
+            <span>Jingyu Liu<sup>1,†,§</sup></span>
+            <span>Hao Jiang<sup>2,†</sup></span>
+            <span>Yikang Ding<sup>2,‡</sup></span>
+            <span>Huafeng Shi<sup>2</sup></span>
+            <span>Xu Yang<sup>2</sup></span>
+            <span>Xiaoqiang Liu<sup>2</sup></span>
+            <span>Guoxin Zhang<sup>2</sup></span>
+            <span>Pengfei Wan<sup>2</sup></span>
+            <span>Kun Gai<sup>2,*</sup></span>
+          </p>
+          <p class="affiliations"><span><sup>1</sup>Renmin University of China</span><span><sup>2</sup>Kling Team, Kuaishou Technology</span></p>
+          <p class="author-notes"><span><sup>†</sup> Equal contribution</span><span><sup>§</sup> Work done at Kling Team, Kuaishou Technology</span><span><sup>‡</sup> Project Leader</span><span><sup>*</sup> Corresponding author</span></p>
+        </div>
+
+        <div class="hero-actions" aria-label="Project links">
+          <button class="button button-primary" type="button" disabled>
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M6.5 3.5h8l3 3v14h-11zM14 3.5v4h3.5M9 12h6M9 16h6"/></svg>
+            Paper <span>Coming soon</span>
+          </button>
+          <button class="button button-secondary" type="button" disabled>
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 9 4 12l4 3M16 9l4 3-4 3M14 6l-4 12"/></svg>
+            Code <span>Coming soon</span>
+          </button>
+        </div>
+      </div>
+
+      <figure class="hero-visual reveal" data-delay="1">
+        <div class="figure-tape tape-one" aria-hidden="true"></div>
+        <div class="figure-tape tape-two" aria-hidden="true"></div>
+        <img src="assets/images/method-overview.png" alt="Overview of TrajCFG: token trajectories provide feedback that adaptively changes guidance scales during denoising." width="1800" height="1489">
+        <figcaption><span>At a glance</span> Historical token trajectories become guidance feedback.</figcaption>
+      </figure>
+    </section>
+
+    <section class="fact-strip" aria-label="Key properties">
+      <div class="shell fact-grid">
+        <div><strong>0</strong><span>training steps</span></div>
+        <div><strong>Token-wise</strong><span>adaptive scales</span></div>
+        <div><strong>0 extra</strong><span>model evaluations</span></div>
+        <div><strong>5</strong><span>generation modalities</span></div>
+      </div>
+    </section>
+
+    <section class="section shell overview" id="overview" aria-labelledby="overview-title">
+      <div class="section-label reveal"><span>01</span> Overview</div>
+      <div class="overview-grid">
+        <div class="section-heading reveal">
+          <p class="kicker">TL;DR</p>
+          <h2 id="overview-title">One shared CFG scale overlooks how differently tokens evolve.</h2>
+        </div>
+        <div class="abstract-copy reveal" data-delay="1">
+          <p class="lead">TrajCFG turns denoising history into a fine-grained control signal.</p>
+          <p>Classifier-free guidance typically applies a shared scale to all latent tokens, although their velocity predictions evolve differently during sampling. TrajCFG adapts guidance token by token using historical changes in guided velocity direction: larger directional changes receive stronger guidance, while more consistent trajectories receive weaker guidance.</p>
+          <p>The method combines adjacent-step and interval-normalized longer-span feedback, reuses standard CFG predictions, and requires neither training nor additional model evaluations. Across text-to-video, image-to-video, text-to-audio-video, text-to-image, and image-to-3D generation, it consistently improves generation quality on multiple backbones.</p>
+        </div>
+      </div>
+
+      <div class="idea-grid" aria-label="TrajCFG highlights">
+        <article class="idea reveal">
+          <span class="idea-index">A</span>
+          <h3>Read the trajectory</h3>
+          <p>Measure token-level directional changes already produced along the denoising path.</p>
+        </article>
+        <article class="idea reveal" data-delay="1">
+          <span class="idea-index">B</span>
+          <h3>Allocate guidance</h3>
+          <p>Map trajectory feedback to bounded token-wise scales instead of one global value.</p>
+        </article>
+        <article class="idea reveal" data-delay="2">
+          <span class="idea-index">C</span>
+          <h3>Plug in and sample</h3>
+          <p>Reuse standard conditional and unconditional predictions with no added NFE.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section method-section" id="method" aria-labelledby="method-title">
+      <div class="shell">
+        <div class="section-label reveal"><span>02</span> Method</div>
+        <div class="method-intro">
+          <div class="section-heading reveal">
+            <p class="kicker">Trajectory feedback</p>
+            <h2 id="method-title">Guidance that listens to each token’s recent motion.</h2>
+          </div>
+          <p class="method-summary reveal" data-delay="1">As sampling unfolds, tokens reveal whether their velocity direction is stable or still changing. TrajCFG converts that signal into a bounded, bidirectional adjustment around the base guidance scale.</p>
+        </div>
+
+        <figure class="paper-figure method-figure reveal">
+          <img src="assets/images/method-overview.png" alt="TrajCFG method pipeline showing standard classifier-free guidance predictions, trajectory feedback and token-wise scale adaptation." loading="lazy">
+          <figcaption><b>Figure 1.</b> TrajCFG reuses the standard CFG branch outputs and adapts scales from denoising history.</figcaption>
+        </figure>
+
+        <div class="method-detail">
+          <figure class="paper-figure insight-figure reveal">
+            <img src="assets/images/trajectory-insight.png" alt="Plot relating historical directional angle to token content relevance." loading="lazy">
+            <figcaption><b>Controlled observation.</b> Historical directional changes expose content-relevant token behavior.</figcaption>
+          </figure>
+          <ol class="method-steps reveal" data-delay="1">
+            <li><span>01</span><div><h3>Compare velocity directions</h3><p>Track adjacent-step change and a normalized longer-span change for every latent token.</p></div></li>
+            <li><span>02</span><div><h3>Fuse short and long history</h3><p>Combine responsive local feedback with a steadier interval signal to reduce noisy allocation.</p></div></li>
+            <li><span>03</span><div><h3>Adapt within safe bounds</h3><p>Convert the fused feedback into token-wise CFG scales while preserving the original sampler structure.</p></div></li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section class="section shell results-section" id="results" aria-labelledby="results-title">
+      <div class="section-label reveal"><span>03</span> Results</div>
+      <div class="results-intro">
+        <div class="section-heading reveal">
+          <p class="kicker">Quality without overhead</p>
+          <h2 id="results-title">Consistent gains, at the runtime of standard CFG.</h2>
+        </div>
+        <div class="metric-pair reveal" data-delay="1">
+          <div class="metric"><strong>+0.30–0.75</strong><span>VBench Total over the strongest evaluated baseline across three T2V backbones</span></div>
+          <div class="metric"><strong>1.0×</strong><span>relative runtime, versus 1.5× for additional-evaluation guidance methods</span></div>
+        </div>
+      </div>
+
+      <div class="result-figures">
+        <figure class="paper-figure reveal">
+          <div class="figure-tag">Text-to-video</div>
+          <img src="assets/images/results-t2v.png" alt="Text-to-video quantitative comparison across multiple backbones and guidance baselines." loading="lazy">
+          <figcaption>TrajCFG improves overall VBench performance across all evaluated video backbones.</figcaption>
+        </figure>
+        <figure class="paper-figure reveal" data-delay="1">
+          <div class="figure-tag peach">Image-to-video</div>
+          <img src="assets/images/results-i2v.png" alt="Image-to-video quantitative comparison across backbones and guidance baselines." loading="lazy">
+          <figcaption>The same token-wise feedback generalizes to image-conditioned video generation.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section gallery-section" id="gallery" aria-labelledby="gallery-title">
+      <div class="shell">
+        <div class="section-label reveal"><span>04</span> Qualitative gallery</div>
+        <div class="gallery-heading">
+          <div class="section-heading reveal">
+            <p class="kicker">Across modalities</p>
+            <h2 id="gallery-title">See guidance change the motion, detail, and alignment.</h2>
+          </div>
+          <p class="gallery-note reveal" data-delay="1">Choose a generation task, then move between examples. Videos are synchronized automatically for a fair side-by-side comparison.</p>
+        </div>
+
+        <div class="task-tabs reveal" role="tablist" aria-label="Generation tasks" data-task-tabs>
+          <button role="tab" type="button" aria-selected="true" aria-controls="gallery-panel" id="tab-t2v" data-task="t2v">Text to Video <span>T2V</span></button>
+          <button role="tab" type="button" aria-selected="false" aria-controls="gallery-panel" id="tab-i2v" data-task="i2v" tabindex="-1">Image to Video <span>I2V</span></button>
+          <button role="tab" type="button" aria-selected="false" aria-controls="gallery-panel" id="tab-t2av" data-task="t2av" tabindex="-1">Text to A/V <span>T2AV</span></button>
+          <button role="tab" type="button" aria-selected="false" aria-controls="gallery-panel" id="tab-t2i" data-task="t2i" tabindex="-1">Text to Image <span>T2I</span></button>
+          <button role="tab" type="button" aria-selected="false" aria-controls="gallery-panel" id="tab-i23d" data-task="i23d" tabindex="-1">Image to 3D <span>I2-3D</span></button>
+        </div>
+
+        <div class="gallery-frame reveal" id="gallery-panel" role="tabpanel" aria-labelledby="tab-t2v" tabindex="0" data-gallery-panel>
+          <div class="gallery-meta">
+            <div>
+              <span class="gallery-benchmark" data-gallery-benchmark>DynamicBench · Wan2.2-14B</span>
+              <p class="gallery-prompt" data-gallery-prompt></p>
+              <p class="gallery-hint" data-gallery-hint></p>
+            </div>
+            <div class="case-controls" aria-label="Gallery case navigation">
+              <button type="button" data-prev-case aria-label="Previous example">
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m15 5-7 7 7 7"/></svg>
+              </button>
+              <span data-case-count aria-live="polite">01 / 02</span>
+              <button type="button" data-next-case aria-label="Next example">
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="media-comparison" data-media-comparison></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section shell citation-section" id="citation" aria-labelledby="citation-title">
+      <div class="section-label reveal"><span>05</span> Citation</div>
+      <div class="citation-grid">
+        <div class="section-heading reveal">
+          <p class="kicker">Build on TrajCFG</p>
+          <h2 id="citation-title">If this work helps your research, please cite it.</h2>
+          <p class="citation-note">The arXiv identifier will be added after the preprint is released.</p>
+        </div>
+        <div class="code-wrap reveal" data-delay="1">
+          <div class="code-header"><span>BibTeX</span><button type="button" data-copy-bibtex><span data-copy-label>Copy</span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M9 9h11v11H9zM4 4h11v3M4 4v11h3"/></svg></button></div>
+          <pre><code id="bibtex">@article{liu2026trajcfg,
+  title   = {TrajCFG: Token-Wise Classifier-Free Guidance
+             via Denoising Trajectory Feedback},
+  author  = {Liu, Jingyu and Jiang, Hao and Ding, Yikang and
+             Shi, Huafeng and Yang, Xu and Liu, Xiaoqiang and
+             Zhang, Guoxin and Wan, Pengfei and Gai, Kun},
+  journal = {arXiv preprint},
+  year    = {2026}
+}</code></pre>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="shell footer-inner">
+      <a class="wordmark" href="#top"><span class="wordmark-mark" aria-hidden="true">T</span><span>TrajCFG</span></a>
+      <p>Token-wise guidance from the trajectories already there.</p>
+      <p class="footer-meta">Research project page · 2026</p>
+    </div>
+  </footer>
+
+  <div class="toast" role="status" aria-live="polite" data-toast>BibTeX copied</div>
+</body>
+</html>
