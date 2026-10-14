@@ -2,6 +2,10 @@
 
 Static, dependency-free project page for **TrajCFG: Token-Wise Classifier-Free Guidance via Denoising Trajectory Feedback**.
 
+- Paper: https://arxiv.org/abs/2610.14153
+- Code: https://github.com/jyliu-98/TrajCFG
+- Project page: https://jyliu-98.github.io/trajcfg-project-page/
+
 ## Preview locally
 
 From this directory, run:
@@ -20,17 +24,6 @@ Then open `http://127.0.0.1:4173/`.
 4. Choose the default branch and `/ (root)`.
 
 All URLs are relative, so the page works both at a user site and under a repository subpath.
-
-## Add paper and code links
-
-When the URLs are available, replace the two disabled buttons in `index.html` with links:
-
-```html
-<a class="button button-primary" href="ARXIV_URL">Paper</a>
-<a class="button button-secondary" href="CODE_URL">Code</a>
-```
-
-Also update the BibTeX entry with the final arXiv identifier.
 
 ## Structure
 

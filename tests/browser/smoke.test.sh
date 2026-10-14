@@ -36,7 +36,14 @@ grep -q 'const galleryData' script.js
 grep -q 'Wan2.2-14B' script.js
 grep -q 'Qwen-Image' script.js
 grep -q 'Hunyuan3D 2.0' script.js
-grep -q 'Coming soon' index.html
+grep -q 'href="https://arxiv.org/abs/2610.14153"' index.html
+grep -q 'href="https://github.com/jyliu-98/TrajCFG"' index.html
+grep -q 'journal = {arXiv preprint arXiv:2610.14153}' index.html
+
+if grep -q 'Coming soon' index.html; then
+  echo "Found a stale Coming soon state." >&2
+  exit 1
+fi
 
 if grep -Eq '(src|href)=""' index.html script.js; then
   echo "Found an empty src or href attribute." >&2

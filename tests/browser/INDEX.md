@@ -6,7 +6,7 @@
 - Local stylesheet, script, figures, and selected media paths resolve.
 - Hero, Overview, Method, Results, Gallery, Citation, and Footer are present.
 - Every modality exposes keyboard-accessible backbone tabs and independent case navigation.
-- Paper and Code visibly remain in the `Coming soon` state.
+- Paper links to arXiv:2610.14153, Code links to the public GitHub repository, and BibTeX includes the released identifier.
 - No empty image `src`, video `src`, or anchor `href` attributes are emitted.
 
 Run:
